@@ -1,0 +1,159 @@
+---
+title: "Assignment2"
+author: "Pooja Patil"
+date: "2022-10-15"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r }
+rm(list=ls(all=TRUE)) #clears memory
+options(digits=12) #keeps 12 digits in memory, otherwise summary statistics may be off due to rounding
+```
+#Set working directory by clicking on Session --> set working directory --> to source file loc
+```{r }
+sr_Data <- read.csv("stocks_return.csv", header=TRUE) # imports and renames dataset
+sr_Data <- sr_Data[-1,] # remove one row
+sr_Data #print data
+
+```
+
+```{r}
+colnames(sr_Data) #print column name from the data
+```
+#Compute descriptive statistics
+#Arithmatic Mean
+```{r}
+spmean <- round( mean(sr_Data[,"SR.SP.500"]), 1) # computes the mean and rounds it to the one decimal
+applemean <- round( mean(sr_Data[,"SR.AAPL"]), 1)
+intelmean <- round( mean(sr_Data[,"SR.INTC"]), 1)
+krogermean <- round( mean(sr_Data[,"SR.KR"]), 1)
+spmean
+applemean
+intelmean
+krogermean
+
+```
+#Standard Deviation
+```{r}
+spsd <- round( sqrt(var(sr_Data[,"SR.SP.500"])), 1) # computes the SD and rounds it to the one decimal
+applesd <- round( sqrt(var(sr_Data[,"SR.AAPL"])), 1)
+intelsd <- round( sqrt(var(sr_Data[,"SR.INTC"])), 1)
+krogersd <- round( sqrt(var(sr_Data[,"SR.KR"])), 1)
+spsd
+applesd
+intelsd
+spsd
+```
+#Geometric Mean
+```{r}
+#Geometric Mean for SP500
+str(sr_Data$SR.SP500_Return) # confirm that variable called Return is numeric
+sr_Data <- transform(sr_Data, returnplus1 = SR.SP500_Return + 1)
+geomeanreturn <- exp(mean(log(sr_Data$returnplus1))) - 1
+
+gm_sp500 <- round(geomeanreturn * 100, 1) 
+gm_sp500
+```
+
+```{r}
+#Geometric Mean for APPL
+str(sr_Data$SR.AAPL_Return) # confirm that variable called Return is numeric
+sr_Data <- transform(sr_Data, returnplus1 = SR.AAPL_Return + 1)
+geomeanreturn <- exp(mean(log(sr_Data$returnplus1))) - 1
+gm_apple <- round(geomeanreturn * 100, 1)
+gm_apple
+```
+
+```{r}
+#Geometric Mean of INTC
+str(sr_Data$SR.INTC_Return) # confirm that variable called Return is numeric
+sr_Data <- transform(sr_Data, returnplus1 = SR.INTC_Return + 1)
+geomeanreturn <- exp(mean(log(sr_Data$returnplus1))) - 1
+gm_intel <- round(geomeanreturn * 100, 1)
+gm_intel
+
+```
+
+```{r}
+#Geometric Mean of KR
+str(sr_Data$SR.KR_Return) # confirm that variable called Return is numeric
+sr_Data <- transform(sr_Data, returnplus1 = SR.KR_Return + 1)
+geomeanreturn <- exp(mean(log(sr_Data$returnplus1))) - 1
+geomeanreturn
+gm_kroger <- round(geomeanreturn * 100, 1)
+gm_kroger
+```
+##Extract variables to be used in the analyses
+```{r}
+sp500 <- sr_Data[,"SR.SP500_Return"] #no number before comma means select all rows
+apple <- sr_Data[,"SR.AAPL_Return"]
+```
+#Regress SR.AAPL on SP.500
+```{r}
+mod.1 <- lm(apple ~ sp500)
+summary(mod.1)
+betaAAPL <- mod.1$coefficients[2]
+round(betaAAPL,1)
+```
+# Plot data and regression line
+```{r}
+plot(sp500, apple)
+abline(mod.1, col="red")
+```
+##Extract variables to be used in the analyses
+```{r}
+sp500 <- sr_Data[,"SR.SP500_Return"] #no number before comma means select all rows
+intel <- sr_Data[,"SR.INTC"]
+```
+
+#Regress SR.INTC on SP 500
+```{r}
+mod.1 <- lm(intel ~ sp500)
+summary(mod.1)
+betaINTC <- mod.1$coefficients[2]
+round(betaINTC, 1)
+
+```
+# Plot data and regression line
+```{r}
+plot(sp500, intel)
+abline(mod.1, col="red")
+```
+##Extract variables to be used in the analyses
+```{r}
+sp500 <- sr_Data[,"SR.SP.500"] #no number before comma means select all rows
+kroger <- sr_Data[,"SR.KR"]
+```
+#Regress SR.KR on SR.SP.500
+```{r}
+mod.1 <- lm(kroger ~ sp500) 
+summary(mod.1)
+betaKR <- mod.1$coefficients[2]
+round(betaKR,1)
+
+```
+# Plot data and regression line
+```{r}
+plot(sp500, kroger)
+abline(mod.1, col="red")
+```
+#Coefficients of variation
+```{r}
+#for SP500
+round(coef_var_sp500 <- spsd / spmean, 1)
+#for apple
+round(coef_var_aapl <- applesd / applemean, 1)
+#for intel
+round(coef_var_intc <- intelsd / intelmean , 1)
+#for kroger
+round(coef_var_kroger <- krogersd / krogermean, 1)
+
+```
+
+
+
+
+
